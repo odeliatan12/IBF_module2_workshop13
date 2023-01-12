@@ -12,46 +12,61 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
-// To form the validation of the contact
 public class Contact implements Serializable {
-    
-    // Form the validation
+    private static final long serialVersionUID = 1L;
+
     @NotNull(message = "Name cannot be null")
-    @Size(min = 3, max = 64, message = "Please enter a name that is between 3 and 64 characters")
+    @Size(min = 3, max = 64, message = "Name must be between 3 and 64 characters")
     private String name;
 
-    // Do not require a non-null for email because it will auto validate the email
-    @Email(message = "Please enter a valid email address")
+    @Email(message = "Invalid Email")
     private String email;
 
-    @NotNull(message = "Phone number must not be null")
-    @Min(value = 7, message = "phone digit must be 8")
-    private Integer phoneNumber;
+    @Min(value = 8, message = "Phone number must be 8 digit")
+    private int phoneNumber;
 
-    // Creating a new id
     private String id;
 
-    @Past(message = "date of birth must not be in the future")
-    @NotNull(message = "date of birth cannot be null")
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private LocalDate dateofbirth;
+    @Past(message = "Date of birth must not be future")
+    @NotNull(message = "Date of Birth must be mandatory")
+    @DateTimeFormat(pattern = "MM-dd-yyyy")
+    // if use localdate age is not captured
+    private LocalDate dateOfBirth;
 
+    public Contact() {
+        this.id = this.generateId(8);
+    }
 
-    // Creating a new id for the contact
-    public String getContactID(int numofChar){
+    public Contact(String name, String email, int phoneNumber) {
+        this.id = this.generateId(8);
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 
-        // Generating a unique number for the contact
-        Random rand = new Random();
+    public Contact(String id, String name, String email, int phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 
-        // Forming like a data structure to store the contact
-        StringBuilder str = new StringBuilder();
+    private synchronized String generateId(int numChars) {
+        Random r = new Random();
 
-        // Appending the random generated number to the string which will be the number of characters
-        while(str.length() < numofChar){
-            str.append(Integer.toHexString(rand.nextInt()));
+        // allows to modify the string such as append, delete, or inserting characters
+        // e.g. sb.append("hello") sb.append("world") --> "hello world"
+        StringBuilder sb = new StringBuilder();
+
+        // As long as the number of characters is more than the length of the string, append/add the characters to the stringbuilder. traslate the integer to hex string
+        while (sb.length() < numChars) {
+
+            // Integer.toHexString() is a method that converts an integer to its corresponding hexadecimal string representation. For example, the integer 10 would be converted to the hexadecimal string "A", and the integer 255 would be converted to the hexadecimal string "FF".
+            sb.append(Integer.toHexString(r.nextInt()));
         }
 
-        return id;
+        // slicing method
+        return sb.toString().substring(0, numChars);
     }
 
     public String getName() {
@@ -70,11 +85,11 @@ public class Contact implements Serializable {
         this.email = email;
     }
 
-    public Integer getPhoneNumber() {
+    public int getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(Integer phoneNumber) {
+    public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -86,13 +101,12 @@ public class Contact implements Serializable {
         this.id = id;
     }
 
-    public LocalDate getDateofbirth() {
-        return dateofbirth;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDateofbirth(LocalDate dateofbirth) {
-        this.dateofbirth = dateofbirth;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
-    
 }
